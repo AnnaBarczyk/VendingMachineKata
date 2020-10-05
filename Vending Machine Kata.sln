@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30503.244
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vending Machine Kata", "Vending Machine Kata.csproj", "{80642A61-1C75-4DD6-9B28-798839EC56FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vending_Machine_Test", "..\Vending_Machine_Test\Vending_Machine_Test.csproj", "{60DF940C-C461-4EA8-80CD-091A2A57A0DB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{80642A61-1C75-4DD6-9B28-798839EC56FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80642A61-1C75-4DD6-9B28-798839EC56FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80642A61-1C75-4DD6-9B28-798839EC56FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80642A61-1C75-4DD6-9B28-798839EC56FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60DF940C-C461-4EA8-80CD-091A2A57A0DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60DF940C-C461-4EA8-80CD-091A2A57A0DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60DF940C-C461-4EA8-80CD-091A2A57A0DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60DF940C-C461-4EA8-80CD-091A2A57A0DB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {18678D32-2E99-4E4E-A871-45C8353D7EA1}
+	EndGlobalSection
+EndGlobal
