@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Vending_Machine_Kata
+namespace Vending_Machine_Kata.Products
 {
-    class Coin
+    public abstract class Product
     {
     }
 }

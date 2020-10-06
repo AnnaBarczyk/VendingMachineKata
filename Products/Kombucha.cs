@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Vending_Machine_Kata.Products
 {
-    class Kombucha
+    public class Kombucha : Product
     {
     }
 }

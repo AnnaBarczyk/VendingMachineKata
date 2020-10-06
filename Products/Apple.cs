@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Vending_Machine_Kata.Products
 {
-    class Apple
+    public class Apple : Product
     {
     }
 }

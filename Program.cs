@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Dynamic;
 
 namespace Vending_Machine_Kata
 {
@@ -6,7 +7,10 @@ namespace Vending_Machine_Kata
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var machine = new VendingMachine();
+            var day = new Day();
+
+            day.StartNewDay(machine);
         }
     }
 }

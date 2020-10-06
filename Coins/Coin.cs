@@ -5,7 +5,7 @@ using static Vending_Machine_Kata.Coins.CoinsEnum;
 
 namespace Vending_Machine_Kata.Coins
 {
-    class Coin
+    public class Coin
     {
         public CoinsNames _coinName { get; set; }
 
