@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Vending_Machine_Kata.Coins;
 using Vending_Machine_Kata.Products;
 
@@ -8,44 +7,41 @@ namespace Vending_Machine_Kata
 {
     public class VendingMachine
     {
-        // Products on shelves
+        // Products on shelves, public because user sees them and delivery can change them ;) Can be made private.
         public List<Apple> apples { get; set; }
         public List<Kombucha> kombuchas { get; set; }
         public List<Salad> salads { get; set; }
+
         //Coins in machine safe
         private List<Coin> _dimes { get; set; }
         private List<Coin> _quarters { get; set; }
         private List<Coin> _nickels { get; set; }
+
         //Temp values for actual transaction
-        private List<Coin> _change { get; private set; }
-        private int _moneyValueInMachine { get; set; }
-        private int _clientMoney { get; set; }
-        private int _howMuchToReturn { get; }
+        private int _clientMoneyValue { get; set; }
+
         //Price values
         private int _applePrice { get; set; }
         private int _kombuchaPrice { get; set; }
         private int _saladPrice { get; set; }
+
         //Money values
         private int _dimeValue { get; set; }
         private int _nickelValue { get; set; }
         private int _quarterValue { get; set; }
+
         //Product quantity
         private int _appleNumber { get; set; }
         private int _kombuchaNumber { get; set; }
         private int _saladNumber { get; set; }
         private int _howManyProductTypes { get; set; }
-        //Coins quantity
-        private int _dimesQuantity { get; set; }
-        private int _nickelsQuantity { get; set; }
-        private int quartersQuantity { get; set; }
 
         public VendingMachine(int howManyDimes, int howManyQuarters, int howManyNickels)
         {
             // Coins
-            _dimes = new List<Coin>();
             _quarters = new List<Coin>();
+            _dimes = new List<Coin>(); 
             _nickels = new List<Coin>();
-            _change = new List<Coin>();
             // Prices
             _applePrice = 50;
             _kombuchaPrice = 65;
@@ -65,32 +61,20 @@ namespace Vending_Machine_Kata
             for (int i = 1; i <= howManyDimes; i++)
             {
                 _dimes.Add(new Coin(CoinsEnum.CoinsNames.Dime));
-                _moneyValueInMachine += _dimeValue;
-                _dimesQuantity++;
             }
 
             for (int i = 1; i <= howManyQuarters; i++)
             {
                 _quarters.Add(new Coin(CoinsEnum.CoinsNames.Quarter));
-                _moneyValueInMachine += _quarterValue;
-                quartersQuantity++;
             }
 
             for (int i = 1; i <= howManyNickels; i++)
             {
                 _nickels.Add(new Coin(CoinsEnum.CoinsNames.Nickel));
-                _moneyValueInMachine += _nickelValue;
-                _nickelsQuantity++;
             }
 
-            // Coin quantity
-            _dimesQuantity = _dimes.Count;
-            _nickelsQuantity = _nickels.Count;
-            quartersQuantity = _quarters.Count;
             // Total values
-            _moneyValueInMachine = (howManyQuarters * _quarterValue) + (howManyNickels * _nickelValue) + (howManyQuarters * _quarterValue);
-            _clientMoney = 0;
-            _howMuchToReturn = 0;
+            _clientMoneyValue = 0;
         }
 
         public void Start()
@@ -102,41 +86,47 @@ namespace Vending_Machine_Kata
             while (CheckIfProductExist(order) == false)
             {
                 ShowProducts();
+                CheckIfExactMoneyNeeded();
                 order = TakeOrder();
             }
             if (CheckIsThereEnoughCredits(order))
             {
-                var changeCoinsQuantity = CountChange(_clientMoney - CheckOrderValue(order));
+                var changeCoinsQuantity = CountChange(_clientMoneyValue - CheckOrderValue(order));
                 SellProduct(order);
                 GiveChange(changeCoinsQuantity);
                 Start();
             }
             else
             {
-                GiveChange(CountChange(_clientMoney));
+                GiveChange(CountChange(_clientMoneyValue));
                 Start();
             }
         }
 
-        public List<int> CountChange(int changeToGive)
+        private List<int> CountChange(int changeToGive)
         {
             int quarters = 0;
             int dimes = 0;
             int nickels = 0;
+            int change = changeToGive;
 
-            while (changeToGive > 0)
+
+            while (change > 0)
             {
-                if (changeToGive >= _quarterValue && quartersQuantity > 0)
+                if (change >= _quarterValue && CountCoinsQuantity(CoinsEnum.CoinsNames.Quarter) > 0)
                 {
                     quarters++;
+                    change -= _quarterValue;
                 }
-                else if (changeToGive >= _dimeValue && _dimesQuantity > 0)
+                else if (change >= _dimeValue && CountCoinsQuantity(CoinsEnum.CoinsNames.Dime) > 0)
                 {
                     dimes++;
+                    change -= _dimeValue;
                 }
-                else if (changeToGive >= _nickelValue && _nickelsQuantity > 0)
+                else if (change >= _nickelValue && CountCoinsQuantity(CoinsEnum.CoinsNames.Nickel) > 0)
                 {
                     nickels++;
+                    change -= _nickelValue; 
                 }
             }
 
@@ -144,6 +134,11 @@ namespace Vending_Machine_Kata
 
 
             return result;
+        }
+        public int CountMoneyValueInMachine()
+        {
+            var moneyValueInMachine = (CountCoinsQuantity(CoinsEnum.CoinsNames.Quarter) * _quarterValue) + (CountCoinsQuantity(CoinsEnum.CoinsNames.Nickel) * _nickelValue) + (CountCoinsQuantity(CoinsEnum.CoinsNames.Dime) * _dimeValue);
+            return moneyValueInMachine;
         }
         public int CheckOrderValue(int orderNumber)
         {
@@ -154,9 +149,9 @@ namespace Vending_Machine_Kata
         }
         public bool CheckIsThereEnoughCredits(int orderNumber)
         {
-            if (orderNumber == _appleNumber && _clientMoney >= _applePrice) return true;
-            else if (orderNumber == _kombuchaNumber && _clientMoney >= _kombuchaPrice) return true;
-            else if (orderNumber == _saladNumber && _clientMoney >= _saladPrice) return true;
+            if (orderNumber == _appleNumber && _clientMoneyValue >= _applePrice) return true;
+            else if (orderNumber == _kombuchaNumber && _clientMoneyValue >= _kombuchaPrice) return true;
+            else if (orderNumber == _saladNumber && _clientMoneyValue >= _saladPrice) return true;
             else return false;
         }
 
@@ -168,24 +163,26 @@ namespace Vending_Machine_Kata
 
             List<Coin> changeToGive = new List<Coin> { };
 
-            for (var i=0; i >= quartersToGive; i++)
+            for (var i=0; i <= quartersToGive; i++)
             {
                 changeToGive.Add(new Coin(CoinsEnum.CoinsNames.Quarter));
                 _quarters.RemoveAt(0);
-                quartersQuantity--;
             }
-            for (var i = 0; i >= dimesToGive; i++)
+            for (var i = 0; i <= dimesToGive; i++)
             {
                 changeToGive.Add(new Coin(CoinsEnum.CoinsNames.Dime));
                 _dimes.RemoveAt(0);
-                _dimesQuantity--;
             }
-            for (var i = 0; i >= nickelsToGive; i++)
+            for (var i = 0; i <= nickelsToGive; i++)
             {
                 changeToGive.Add(new Coin(CoinsEnum.CoinsNames.Nickel));
                 _nickels.RemoveAt(0);
-                _nickelsQuantity--;
             }
+
+            Console.WriteLine("Please take your change and hit enter: \n" + "\nQuarters:" + quartersToGive + "\nDimes:" + dimesToGive + "\nNickels:" + nickelsToGive);
+            Console.ReadLine();
+            Console.Clear();
+
 
             return changeToGive;
         }
@@ -216,7 +213,7 @@ namespace Vending_Machine_Kata
 
         private void ShowProducts()
         {
-            float temp = _clientMoney / 100;
+            float temp = _clientMoneyValue / 100;
             var credits = temp.ToString("C", System.Globalization.CultureInfo.CreateSpecificCulture("en-US"));
             string appleMessage = "SOLD OUT";
             string kombuchaMessage = "SOLD OUT";
@@ -257,7 +254,7 @@ namespace Vending_Machine_Kata
             var none = 0;
             try
             {
-                var productNumber = int.Parse(chosenProductPosition);
+                var productNumber = short.Parse(chosenProductPosition);
 
                 if (productNumber == _appleNumber && apples.Count > none)
                 {
@@ -294,26 +291,14 @@ namespace Vending_Machine_Kata
 
         private List<Coin> TakeAndCountMoneyFromClient()
         {
-            var ifExactNeeded = _moneyValueInMachine < _applePrice;
-
-            if (ifExactNeeded)
-            {
-                Console.WriteLine("Exact change only");
-            }
-            else
-            {
-                Console.WriteLine("Please, insert money :) ");
-            }
-
-
-            Console.WriteLine("Pennies:");
-            var pennies = int.Parse(Console.ReadLine());
-            Console.WriteLine("Dimes:");
-            var dimes = int.Parse(Console.ReadLine());
             Console.WriteLine("Quarters:");
             var quarters = int.Parse(Console.ReadLine());
+            Console.WriteLine("Dimes:");
+            var dimes = int.Parse(Console.ReadLine());
             Console.WriteLine("Nickels:");
             var nickels = int.Parse(Console.ReadLine());
+            Console.WriteLine("Pennies:");
+            var pennies = int.Parse(Console.ReadLine());
             Console.Clear();
             ShowProducts();
 
@@ -322,22 +307,19 @@ namespace Vending_Machine_Kata
             for (int i = 1; i <= dimes; i++)
             {
                 _dimes.Add(new Coin(CoinsEnum.CoinsNames.Dime));
-                _clientMoney += _dimeValue;
-                _moneyValueInMachine += _dimeValue;
+                _clientMoneyValue += _dimeValue;
             }
 
             for (int i = 1; i <= quarters; i++)
             {
                 _quarters.Add(new Coin(CoinsEnum.CoinsNames.Quarter));
-                _clientMoney += _quarterValue;
-                _moneyValueInMachine += _quarterValue;
+                _clientMoneyValue += _quarterValue;
             }
 
             for (int i = 1; i <= nickels; i++)
             {
                 _nickels.Add(new Coin(CoinsEnum.CoinsNames.Nickel));
-                _clientMoney += _nickelValue;
-                _moneyValueInMachine += _nickelValue;
+                _clientMoneyValue += _nickelValue;
             }
 
             for (int i = 1; i <= pennies; i++)
@@ -359,6 +341,32 @@ namespace Vending_Machine_Kata
 
             }
             return penniesToReturn;
+        }
+
+        private void CheckIfExactMoneyNeeded()
+        {
+            var moneyValueInMachine = CountMoneyValueInMachine();
+            var cheapestProduct = _applePrice;
+        
+            var ifExactNeeded = moneyValueInMachine < cheapestProduct;
+
+            if (ifExactNeeded)
+            {
+                Console.WriteLine("Exact change only");
+                Console.WriteLine("Please, insert money :) ");
+            }
+            else
+            {
+                Console.WriteLine("Please, insert money :) ");
+            }
+        }
+
+        private int CountCoinsQuantity(CoinsEnum.CoinsNames name)
+        {
+            if(name == CoinsEnum.CoinsNames.Dime) return _dimes.Count;
+            else if(name == CoinsEnum.CoinsNames.Nickel) return _nickels.Count;
+            else if (name == CoinsEnum.CoinsNames.Quarter) return _quarters.Count;
+            else return 0;
         }
     }
 }
